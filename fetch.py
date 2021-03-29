@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from bs4 import NavigableString
 
 with open('data.csv', 'w') as f:
-    f.write(f'recovery,active,date\n')
+    f.write(f'recovery,active,death,new_recovery,new_active,new_death,date\n')
 
 url = 'https://en.wikipedia.org/wiki/COVID-19_pandemic_in_India'
 page = requests.get(url, headers={
@@ -19,12 +19,11 @@ table = soup.find(lambda tag: tag.name == 'table'
 
 rows = table.find_all(lambda tag: tag.name == 'tr')
 print(len(rows))
+
+# Memory
+p_recv, p_actv, p_dts = 0, 0, 0
+
 for row in rows:
-    # print(row.attrs['class'])
-    # if 'class="bb-lr"' in row:
-    #     print(True)
-    # else:
-    #     print(False)
 
     if not (row.has_attr('class')):  # and 'mw-collapsible' in row['class']):
         continue
@@ -43,8 +42,6 @@ for row in rows:
                        and 'bb-lr' in tag['class']
                        )
 
-    # print(tds)
-
     if len(tds) == 0:
         continue
 
@@ -54,29 +51,29 @@ for row in rows:
                            and tag.has_attr('style')
                            )
 
-    # print(divs)
-
     if len(divs) == 0:
         continue
 
-    actv, recv = 0, 0
+    actv, recv, dts = 0, 0, 0
     for div in divs:
-        if not ('background:Tomato;' in div['style'] or 'background:SkyBlue;' in div['style']):
-            continue
-
-        # if i == 0
-
-        # Active
         if 'background:SkyBlue;' in div['style']:
             recv = int(div['title'])
         elif 'background:Tomato;' in div['style']:
             actv = int(div['title'])
-        # Recovery
+        else:
+            dts = int(div['title'])
 
-    print(recv, actv, date)
-    # break
+    # Calculate Changes
+    n_recv, n_dts = recv - p_recv, dts - p_dts
+    n_actv = n_recv + n_dts + actv - p_actv
+
+    # Set Previous
+    p_recv, p_actv, p_dts = recv, actv, dts
+
+    print(recv, actv, dts, n_recv, n_actv, n_dts, date)
+
     with open('data.csv', 'a') as f:
-        f.write(f'{recv},{actv},{date}\n')
+        f.write(f'{recv},{actv},{dts},{n_recv},{n_actv},{n_dts},{date}\n')
 
 
 # print()
