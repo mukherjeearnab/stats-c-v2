@@ -1,29 +1,26 @@
-from statsmodels.tsa.holtwinters import ExponentialSmoothing
+from statsmodels.tsa.arima.model import ARIMA
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 
-STEPS = 720
+STEPS = 30
 
 data = pd.read_csv('data.csv')
 
 # fit recovery
-model = ExponentialSmoothing(data['recovery'])
+model = ARIMA(data['new_recovery'], order=(1, 1, 1))
 model_fit = model.fit()
 # make prediction
 recovery = model_fit.forecast(steps=STEPS)
 
 # fit active
-model = ExponentialSmoothing(data['active'])
+model = ARIMA(data['new_active'], order=(1, 1, 1))
 model_fit = model.fit()
 # make prediction
 active = model_fit.forecast(steps=STEPS)
 
 
 sns.set()
-# plt.tight_layout()
-# plt.subplots_adjust(left=0.5, right=0.5)
-# plt.figure(figsize=(80.00, 10.80))
 plt.plot(range(0, STEPS), recovery, label='Recovery')
 plt.plot(range(0, STEPS), active, label='Active')
 plt.ylabel('Cases')
