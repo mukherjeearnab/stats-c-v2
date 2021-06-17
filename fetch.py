@@ -10,36 +10,45 @@ url = 'https://en.wikipedia.org/wiki/COVID-19_pandemic_in_India'
 page = requests.get(url, headers={
                     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'})
 
+
 soup = BeautifulSoup(page.content, "html.parser")
 
-table = soup.find(lambda tag: tag.name == 'table'
-                  and tag.has_attr('style')
-                  and tag['style'] == "text-align:left; border-collapse:collapse; width:100%;"
-                  )
+table_div = soup.find(lambda tag: tag.name == 'div'
+                      and tag.has_attr('class')
+                      and 'barbox' in tag['class'])
+
+
+# print(table_div)
+
+table = table_div.find(lambda tag: tag.name == 'table')
 
 rows = table.find_all(lambda tag: tag.name == 'tr')
-print(len(rows))
+print("ROWS", len(rows))
 
 # Memory
 p_recv, p_actv, p_dts = 0, 0, 0
 
 for row in rows:
+    if 'Date' in row.text or 'Ministry' in row.text:
+        continue
 
     if not (row.has_attr('class')):  # and 'mw-collapsible' in row['class']):
         continue
 
+    # Dates
     td = row.find(lambda tag: tag.name == 'td'
                   and tag.has_attr('class')
-                  and tag.has_attr('style')
-                  and 'bb-04em' in tag['class']
-                  and 'text-align:center' in tag['style']
+                  #   and tag.has_attr('style')
+                  and 'bb-c' in tag['class']
+                  #   and 'text-align:center' in tag['style']
                   )
 
     date = td.contents[0]
 
+    # Case Stats
     tds = row.find_all(lambda tag: tag.name == 'td'
                        and tag.has_attr('class')
-                       and 'bb-lr' in tag['class']
+                       and 'bb-b' in tag['class']
                        )
 
     if len(tds) == 0:
