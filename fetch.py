@@ -65,9 +65,9 @@ for row in rows:
 
     actv, recv, dts = 0, 0, 0
     for div in divs:
-        if 'background:SkyBlue;' in div['style']:
+        if 'mcc-r' in div['class']:
             recv = int(div['title'])
-        elif 'background:Tomato;' in div['style']:
+        elif 'mcc-c' in div['class']:
             actv = int(div['title'])
         else:
             dts = int(div['title'])

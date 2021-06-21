@@ -7,7 +7,7 @@ data = pd.read_csv('data.csv')
 sns.set()
 
 # Set plot of current
-plt.figure(figsize=(80.00, 10.80))
+plt.figure(figsize=(90.00, 10.80))
 plt.plot(data['date'], data['recovery'], label='Recovery')
 plt.plot(data['date'], data['active'], label='Active')
 plt.ylabel('Cases')
