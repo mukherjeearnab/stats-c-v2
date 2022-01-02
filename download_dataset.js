@@ -2,7 +2,7 @@ const fs = require("fs");
 const https = require("https");
 
 // URL of the image
-const url = "https://raw.githubusercontent.com/datameet/covid19/master/data/mohfw.json";
+const url = "https://raw.githubusercontent.com/datameet/covid19/master/data/total_confirmed_cases.json";
 
 https.get(url, (res) => {
     // Image will be stored at this path
